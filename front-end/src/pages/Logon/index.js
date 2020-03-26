@@ -1,33 +1,56 @@
-import React from 'react';
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { FiLogIn } from "react-icons/fi";
+
+import heroesImg from "../../assets/heroes.png";
+import logoImg from "../../assets/logo.svg";
+import api from "../../services/api";
+
 import './style.css';
-import '../../all.css';
 
-import { FiLogIn } from 'react-icons/fi';
+export default function Logon() {
+  const [id, setId] = useState("");
 
-import logoHeroes from '../../assets/logo.svg';
-import heroesImg from '../../assets/heroes.png';
+  const history = useHistory();
 
-function Logon() {
-    return (
-        <div className="logon-container">
-            <section className="form">
-                <img src={logoHeroes} alt="Be the Hero"/>
+  async function handleLogin(e) {
+    e.preventDefault();
 
-                <form>
-                    <h1>Faça seu logon</h1>
+    try {
+      const response = await api.post("/sessions", { id });
 
-                    <input placeholder="Sua ID"/>
-                    <button type="submit">Entrar</button>
+      localStorage.setItem("ongId", id);
+      localStorage.setItem("ongName", response.data.name);
 
-                    <FiLogIn size={16} color="E02041" />
-                    <a href="/register">Não tenho um cadastro.</a>
-                </form>
+      history.push("/profile");
+    } catch (err) {
+      console.log(err);
+      alert("Falha no login, tente novamente.");
+    }
+  }
+  return (
+    <div className="logon-container">
+      <section className="form">
+        <img src={logoImg} alt="Be The Hero" />
 
-            </section>
+        <form onSubmit={handleLogin}>
+          <h1> Faça seu logon </h1>
 
-            <img src={heroesImg} alt="heroes" />
-        </div>
-    )
+          <input
+            placeholder="Sua ID"
+            value={id}
+            onChange={e => setId(e.target.value)}
+          />
+          <button className="button" type="submit">
+            Entrar
+          </button>
+          <Link to="/register" className="back-link">
+            <FiLogIn size={16} color="#e02041" />
+            Não tenho cadastro
+          </Link>
+        </form>
+      </section>
+      <img src={heroesImg} alt="Heroes" />
+    </div>
+  );
 }
-
-export default Logon;
