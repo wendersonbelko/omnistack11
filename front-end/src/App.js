@@ -4,7 +4,7 @@ import "./global.css";
 
 import Routes from "./routes";
 
-function App() {
+const App = () => {
   return (
     <Routes />
   );
